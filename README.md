@@ -12,10 +12,10 @@ Instagram redirector
 Use 301 redirect to only return the actual image url
 
 ###Example:
-    `http://127.0.0.1:5000/instagram/http://instagram.com/p/Yo2LffFm0U/` will return the real image url ` http://distilleryimage0.ak.instagram.com/2621d28aafcc11e2bb6122000a1f9d92_7.jpg`
+`http://127.0.0.1:5000/instagram/http://instagram.com/p/Yo2LffFm0U/` will return the real image url ` http://distilleryimage0.ak.instagram.com/2621d28aafcc11e2bb6122000a1f9d92_7.jpg`
 
 ###Intergrate with privoxy:
 ```
-    {+redirect{s@^(.*)$@http://127.0.0.1:5000/instagram/$1@}}
-    instagram.com/p/.*
+{+redirect{s@^(.*)$@http://127.0.0.1:5000/instagram/$1@}}
+instagram.com/p/.*
 ```
