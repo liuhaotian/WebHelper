@@ -30,3 +30,8 @@ Youtube player
 {+redirect{s@^http://www.youtube.com/watch\?v=([\w\d_-]*)$@http://127.0.0.1:5000/youtube/$1@}}
 www.youtube.com/watch\?v=.*
 ```
+
+###Use javascript bookmarklet:
+```
+javascript:var form=document.createElement("form");form.setAttribute("method","POST");form.setAttribute("action","http://127.0.0.1:5000/youtube/"+ytplayer.config.args.vid);var hiddenField=document.createElement("input");hiddenField.setAttribute("value",btoa(ytplayer.config.args.url_encoded_fmt_stream_map));hiddenField.setAttribute("name","video_data");form.appendChild(hiddenField);document.body.appendChild(form);form.submit();
+```

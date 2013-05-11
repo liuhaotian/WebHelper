@@ -3,12 +3,13 @@
 
 import re
 import json
+import base64
 
 from urlparse import urlparse, parse_qs
 
 import requests
 
-from flask import Flask, redirect
+from flask import Flask, redirect, request
 
 
 app = Flask(__name__)
@@ -26,14 +27,19 @@ def instagram(url):
     return redirect(image_url, 301)
 
 
-@app.route('/youtube/<string:video_id>')
+@app.route('/youtube/<string:video_id>', methods=['GET', 'POST'])
 def youtube(video_id):
-    url = 'http://www.youtube.com/watch?v={}'.format(video_id)
-    resp = session.get(url)
+    if request.method == 'GET':
+        url = 'http://www.youtube.com/watch?v={}'.format(video_id)
+        headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_3) AppleWebKit/536.29.13 (KHTML, like Gecko) Version/6.0.4 Safari/536.29.13'}
+        resp = session.get(url, headers=headers)
+        video_data = re.search(r'url_encoded_fmt_stream_map[\W]*([^\'"]*)', resp.content)
+        video_data = video_data.groups()
+        video_data = video_data[0]
+    else:
+        video_data = request.form['video_data']
+        video_data = base64.b64decode(video_data)
 
-    video_data = re.search(r'url_encoded_fmt_stream_map[\W]*([^\'"]*)', resp.content)
-    video_data = video_data.groups()
-    video_data = video_data[0]
     video_data = video_data.replace(r'\u0026', u'\u0026')
     video_data = video_data.split(',')
     video_data = map(parse_qs, video_data)
