@@ -22,6 +22,8 @@ instagram.com/p/.*
 
 Youtube player
 --------------
+Simple HTML5 player for youtube Flash-only videos
+
 ###Example:
 `http://127.0.0.1:5000/youtube/m3ROQJ-Vvy4` will render a html5 player for `http://www.youtube.com/watch?v=m3ROQJ-Vvy4`
 
