@@ -29,6 +29,7 @@ def instagram(url):
 
 @app.route('/youtube/<string:video_id>', methods=['GET', 'POST'])
 def youtube(video_id):
+    watch_url = ''
     if request.method == 'GET':
         url = 'http://www.youtube.com/watch?v={}'.format(video_id)
         headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_3) AppleWebKit/536.29.13 (KHTML, like Gecko) Version/6.0.4 Safari/536.29.13'}
@@ -39,6 +40,7 @@ def youtube(video_id):
     else:
         video_data = request.form['video_data']
         video_data = base64.b64decode(video_data)
+        watch_url = base64.b64decode(request.form['watch_url']) if 'watch_url' in request.form else ''
 
     video_data = video_data.replace(r'\u0026', u'\u0026')
     video_data = video_data.split(',')
@@ -58,6 +60,7 @@ def youtube(video_id):
             if video['quality'] == quality:
                 ret.append("<source src='{url}&signature={sig}' type='{type}'>".format(**video))
     ret.append('</video>')
+    ret.append('<img src="{watch_url}" style="visibility:hidden">'.format(watch_url=watch_url))
     return ''.join(ret)
 
 if __name__ == "__main__":

@@ -37,3 +37,8 @@ www.youtube.com/watch\?v=.*
 ```
 javascript:var form=document.createElement("form");form.setAttribute("method","POST");form.setAttribute("action","http://127.0.0.1:5000/youtube/"+ytplayer.config.args.video_id);var hiddenField=document.createElement("input");hiddenField.setAttribute("value",btoa(ytplayer.config.args.url_encoded_fmt_stream_map));hiddenField.setAttribute("name","video_data");form.appendChild(hiddenField);document.body.appendChild(form);form.submit();
 ```
+
+If you want to set the video watched:
+```
+javascript:var form=document.createElement("form");form.setAttribute("method","POST");form.setAttribute("action","http://127.0.0.1:5000/youtube/"+ytplayer.config.args.video_id);var hiddenField=document.createElement("input");hiddenField.setAttribute("value",btoa(ytplayer.config.args.url_encoded_fmt_stream_map));hiddenField.setAttribute("name","video_data");form.appendChild(hiddenField);hiddenField=document.createElement("input");hiddenField.setAttribute("value",btoa("http://www.youtube.com/user_watch?noflv=1&html5=1&video_id="+ytplayer.config.args.video_id+"&plid="+ytplayer.config.args.plid+"&referrer&fmt=18&ptk=youtube_none&skl=false&ucid="+ytplayer.config.args.ucid+"&ns=yt&el=detailpage&fexp="+ytplayer.config.args.fexp));hiddenField.setAttribute("name","watch_url");form.appendChild(hiddenField);document.body.appendChild(form);form.submit();
+```
