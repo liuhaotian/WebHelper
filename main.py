@@ -48,8 +48,6 @@ def youtube(video_id):
     video_data = [{k:d[k][0] for k in d} for d in video_data]
     for video in video_data:
         video['type'] = video['type'].replace('"', '')
-        if 's' in video and 'sig' not in video:
-            video['sig'] = video['s']
 
     qualities = {'small': 1, 'medium': 2, 'large': 3, 'hd720': 4, 'hd1080': 5}
     qualities_index = {v:k for k,v in qualities.items()}
@@ -60,7 +58,7 @@ def youtube(video_id):
     for quality in sorted(qualities, key=lambda x:qualities[x], reverse=True):
         for video in video_data:
             if video['quality'] == quality:
-                ret.append("<source src='{url}&signature={sig}' type='{type}'>".format(**video))
+                ret.append("<source src='{url}' type='{type}'>".format(**video))
     ret.append('</video>')
     ret.append('<img src="{watch_url}" style="visibility:hidden">'.format(watch_url=watch_url))
     return ''.join(ret)
