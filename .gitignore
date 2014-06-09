@@ -6,3 +6,4 @@ itsdangerous.py
 jinja2
 requests
 werkzeug
+bs4

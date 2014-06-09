@@ -9,6 +9,7 @@ from urlparse import urlparse, parse_qs
 
 import requests
 
+from bs4 import BeautifulSoup
 from flask import Flask, redirect, request
 
 
@@ -25,6 +26,20 @@ def instagram(url):
     resp = session.get(url)
     image_url = re.search(r'http://[\w]*image[\d]*.ak.instagram.com/[\d\w_]*\.jpg', resp.content).group()
     return redirect(image_url, 301)
+
+
+@app.route("/fetcher/<path:url>")
+def fetcher(url):
+    url = base64.b64decode(url)
+    resp = session.get(url)
+    soup = BeautifulSoup(resp.content)
+
+    del_bs_selectors = request.args.get('del_bs_selectors')
+    if del_bs_selectors:
+        del_bs_selectors = del_bs_selectors.split(',')
+        for selector in del_bs_selectors:
+            [s.extract() for s in soup.select(base64.b64decode(selector))]
+    return unicode(soup)
 
 
 @app.route('/youtube/<string:video_id>', methods=['GET', 'POST'])
