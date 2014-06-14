@@ -64,6 +64,10 @@ def fetcher(url):
     url = base64.b64decode(url)
     resp = session.get(url)
     soup = BeautifulSoup(resp.content)
+    root_selector = request.args.get('root_selector')
+    if root_selector:
+        root_selector = base64.b64decode(root_selector)
+        soup = soup.select(root_selector)[0]
 
     del_bs_selectors = request.args.get('del_bs_selectors')
     if del_bs_selectors:
