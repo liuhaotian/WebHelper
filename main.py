@@ -5,18 +5,49 @@ import re
 import json
 import base64
 
+from time import mktime
+from datetime import datetime
 from urlparse import urlparse, parse_qs
 
 import requests
+import feedparser
 
 from bs4 import BeautifulSoup
 from flask import Flask, redirect, request
+from werkzeug.contrib.atom import AtomFeed
 
 
 app = Flask(__name__)
 session = requests.session()
 session.keep_alive = False
 #session.headers.update({'User-Agent': 'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10'})
+
+
+@app.route("/rss/<path:url>")
+def rss(url):
+    url = base64.b64decode(url)
+    d = feedparser.parse(url)
+    feed = AtomFeed(d.feed.title, feed_url=url, url=d.feed.link)
+    replace_old = request.args.get('replace_old')
+    if replace_old:
+        replace_old = base64.b64decode(replace_old)
+    replace_new = request.args.get('replace_new')
+    if replace_new:
+        replace_new = base64.b64decode(replace_new)
+    for entry in d.entries:
+        updated = datetime.fromtimestamp(mktime(entry.updated_parsed))
+        published = datetime.fromtimestamp(mktime(entry.published_parsed))
+        entry_url = entry.link
+        if replace_old and replace_new:
+            entry_url = entry_url.replace(replace_old, replace_new)
+        entry_url = base64.b64encode(entry_url)
+        entry_content = fetcher(entry_url)
+        feed.add(entry.title, entry_content,
+            url=entry.link,
+            id=entry.id,
+            updated=updated,
+            published=published)
+    return feed.get_response()
 
 
 @app.route("/instagram/<path:url>")
