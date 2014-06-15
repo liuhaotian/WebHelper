@@ -35,8 +35,8 @@ def rss(url):
     if replace_new:
         replace_new = base64.b64decode(replace_new)
     for entry in d.entries:
-        updated = datetime.fromtimestamp(mktime(entry.updated_parsed)) if 'updated_parsed' in entry else None
-        published = datetime.fromtimestamp(mktime(entry.published_parsed)) if 'published_parsed' in entry else None
+        updated = datetime.fromtimestamp(mktime(entry.updated_parsed)) if hasattr(entry, 'updated_parsed') else None
+        published = datetime.fromtimestamp(mktime(entry.published_parsed)) if hasattr(entry, 'published_parsed') else None
         entry_url = entry.link
         if replace_old and replace_new:
             entry_url = entry_url.replace(replace_old, replace_new)
