@@ -20,6 +20,17 @@ Use 301 redirect to only return the actual image url
 instagram.com/p/.*
 ```
 
+RSS proxy
+---------
+Proxy the base64 encoded rss source and use content fetcher to generate the full-text content
+
+###Format:
+`http://127.0.0.1:5000/rss/<base64encoded url>?root_selector=<base64encoded selector>&del_bs_selectors=<base64encoded selector>,<base64encoded selector>...`
+
+###Example:
+For rss source `http://cn.engadget.com/rss.xml`, `'.post-body'` as root selector, `['script']` as the del_bs_selectors,
+`http://localhost:5000/rss/aHR0cDovL2NuLmVuZ2FkZ2V0LmNvbS9yc3MueG1s?root_selector=LnBvc3QtYm9keQ==&del_bs_selectors=c2NyaXB0` will return the full text engadget rss
+
 Content fetcher
 ---------------
 Fetch the base64 encoded url and filter the content by beautifulsoup selector
