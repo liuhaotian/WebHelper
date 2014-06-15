@@ -25,10 +25,10 @@ Content fetcher
 Fetch the base64 encoded url and filter the content by beautifulsoup selector
 
 ###Format:
-`http://127.0.0.1:5000/fetcher/<base64encoded url>?del_bs_selectors=<base64encoded selector>,<base64encoded selector>...`
+`http://127.0.0.1:5000/fetcher/<base64encoded url>?root_selector=<base64encoded selector>&del_bs_selectors=<base64encoded selector>,<base64encoded selector>...`
 
 ###Example:
-For url `http://www.cnn.com`, `['script', '#cnn_hdr']`, `http://localhost:5000/fetcher/aHR0cDovL3d3dy5jbm4uY29t?del_bs_selectors=c2NyaXB0,I2Nubl9oZHI=` will return the cnn website without javascript and header
+For url `http://www.cnn.com`, `[#cnnMainPage]` as root, `['script', '#cnn_hdr']` as filter, `http://localhost:5000/fetcher/aHR0cDovL3d3dy5jbm4uY29t?root_selector=I2Nubk1haW5QYWdl&del_bs_selectors=c2NyaXB0,I2Nubl9oZHI=` will return the cnn website body without javascript and header
 
 Youtube player
 --------------
