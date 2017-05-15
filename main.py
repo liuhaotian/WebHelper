@@ -54,17 +54,20 @@ def rss(url):
 def proxy(url):
     headers = {'User-Agent': request.headers.get('user-agent')}
     resp = session.get(url, headers=headers, verify=False)
-    soup = BeautifulSoup(resp.content)
-    [s.extract() for s in soup.find_all('script')]
+    if 'html' in resp.headers.get('content-type'):
+        soup = BeautifulSoup(resp.content)
+        [s.extract() for s in soup.find_all('script')]
 
-    # fix src and href
-    for attr in ['src', 'href']:
-        tags = soup.find_all(**{attr:True})
-        for tag in tags:
-            u = urljoin(resp.url, tag[attr])
-            tag[attr] = url_for('proxy', url=u)
+        # fix src and href
+        for attr in ['src', 'href']:
+            tags = soup.find_all(**{attr:True})
+            for tag in tags:
+                u = urljoin(resp.url, tag[attr])
+                tag[attr] = url_for('proxy', url=u)
 
-    response = make_response(unicode(soup))
+        response = make_response(unicode(soup))
+    else:
+        response = make_response(resp.content)
     response.headers['content-type'] = resp.headers.get('content-type')
     return response
 
