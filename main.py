@@ -7,20 +7,20 @@ import base64
 
 from time import mktime
 from datetime import datetime
-from urlparse import urlparse, parse_qs
+from urlparse import urlparse, parse_qs, urljoin
 
 import requests
 import feedparser
 
 from bs4 import BeautifulSoup
-from flask import Flask, redirect, request
+from flask import Flask, redirect, request, url_for, make_response
 from werkzeug.contrib.atom import AtomFeed
 
 
 app = Flask(__name__)
 session = requests.session()
 session.keep_alive = False
-#session.headers.update({'User-Agent': 'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10'})
+# session.headers.update({'User-Agent': 'Mozilla/5.0(iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Version/4.0.4 Mobile/7B314 Safari/531.21.10'})
 
 
 @app.route("/rss/<path:url>")
@@ -48,6 +48,25 @@ def rss(url):
             updated=updated,
             published=published)
     return feed.get_response()
+
+
+@app.route("/api/proxy/<path:url>")
+def proxy(url):
+    headers = {'User-Agent': request.headers.get('user-agent')}
+    resp = session.get(url, headers=headers, verify=False)
+    soup = BeautifulSoup(resp.content)
+    [s.extract() for s in soup.find_all('script')]
+
+    # fix src and href
+    for attr in ['src', 'href']:
+        tags = soup.find_all(**{attr:True})
+        for tag in tags:
+            u = urljoin(resp.url, tag[attr])
+            tag[attr] = url_for('proxy', url=u)
+
+    response = make_response(unicode(soup))
+    response.headers['content-type'] = resp.headers.get('content-type')
+    return response
 
 
 @app.route("/instagram/<path:url>")
